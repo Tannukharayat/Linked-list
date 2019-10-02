@@ -1,0 +1,140 @@
+/* Given two numbers represented by two linked lists of size N and M. The task is to return a sum list. The sum list which is a linked 
+list representation of addition of two input numbers */
+
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+/* Linked list Node */
+struct Node {
+    int data;
+    struct Node* next;
+    Node(int x) {
+        data = x;
+        next = NULL;
+    }
+};
+struct Node* addTwoLists(struct Node* first, struct Node* second);
+void push(struct Node** head_ref, int new_data) {
+    struct Node* new_Node = new Node(new_data);
+    new_Node->next = (*head_ref);
+    (*head_ref) = new_Node;
+}
+void printList(struct Node* Node) {
+    while (Node != NULL) {
+        printf("%d ", Node->data);
+        Node = Node->next;
+    }
+    printf("
+");
+}
+void freeList(struct Node* Node) {
+    struct Node* temp;
+    while (Node != NULL) {
+        temp = Node;
+        Node = Node->next;
+        free(temp);
+    }
+}
+int main(void) {
+    int t, n, m, i, x;
+    cin >> t;
+    while (t--) {
+        struct Node* res = NULL;
+        struct Node* first = NULL;
+        struct Node* second = NULL;
+        cin >> n;
+        for (i = 0; i < n; i++) {
+            cin >> x;
+            push(&first, x);
+        }
+        cin >> m;
+        for (i = 0; i < m; i++) {
+            cin >> x;
+            push(&second, x);
+        }
+        res = addTwoLists(first, second);
+        printList(res);
+        if (first) freeList(first);
+        if (second) freeList(second);
+    }
+    return 0;
+}
+
+#include<bits/stdc++.h>
+int add(Node *first,Node *second,int &c,vector<int>&v)
+{
+    if(first->next!=NULL&&second->next!=NULL)
+    add(first->next,second->next,c,v);
+    else
+    if(first->next!=NULL)
+    add(first->next,second,c,v);
+    else if(second->next!=NULL)
+    add(first,second->next,c,v);
+    int sum=first->data+second->data+c;
+    v.push_back(sum%10);
+    c=sum/10;
+}
+int sizee(Node* node)
+{
+    int cnt=0;
+    while(node!=NULL)
+    {
+        node=node->next;
+        cnt++;
+    }
+    return cnt;
+}
+int same_size(Node** first,int diff)
+{
+    for(int i=0;i<diff;i++)
+    {
+        (*first)=(*first)->next;
+    }
+}
+int add_remaining(Node *first,int s,int &c,vector<int>&v)
+{
+    for(int i=0;i<s-1;i++)
+    add_remaining(first->next,s,c,v);
+    int sum=first->data+c;
+    v.push_back(sum%10);
+    c=sum/10;
+}
+Node* addTwoLists(Node* first, Node* second) 
+{
+    int size1=sizee(first),size2=sizee(second);
+    Node *result=NULL,*tmp=NULL;
+    vector<int> v;
+    if(size1==size2)
+    {
+        int c=0;
+        add(first,second,c,v);
+    }else if(size1>size2)
+    {
+        Node *tmp=first;
+        same_size(&tmp,size1-size2);
+        int c=0;
+        add(first,second,c,v);
+        add_remaining(first,size1-size2,c,v);
+    }else if(size1<size2)
+    {
+        Node *tmp=second;
+        same_size(&tmp,size2-size1);
+        int c=0;
+        add(first,second,c,v);
+        add_remaining(second,size2-size1,c,v);
+    }
+    for(int i=0;i<v.size();i++)
+    {
+        Node *np=new Node(v[i]);
+        if(result==NULL)
+        {
+            result=tmp=np;
+        }else
+        {
+            tmp->next=np;
+            tmp=tmp->next;
+        }
+    }
+    return result;
+}
